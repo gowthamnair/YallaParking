@@ -1,0 +1,26 @@
+SELECT t1.UserId,
+t1.EmailAddress,
+t1.Name,
+t1.MobileUser,
+t2.Make,
+convert(varchar, t1.Created, 105) AS AcqDate,
+t2.UserId as CarRegistrationFlag,
+MIN(convert(varchar, t3.PaymentDate, 105)) AS FirstPaymentDate,
+t3.Status,
+COUNT( DISTINCT t3.Number ) AS BookingCount,
+AVG(t3.Price) AS Avg_Price
+FROM Yallaparking.dbo.[User] t1
+LEFT JOIN UserCar t2
+ON t1.UserId=t2.UserId
+LEFT JOIN ParkingSpaceLease t3
+ON t2.UserCarId=t3.UserCarId
+GROUP BY
+t1.UserId,
+t1.EmailAddress,
+t1.Name,
+t1.MobileUser,
+t2.Make,
+t1.Created,
+t2.UserId,
+t3.PaymentDate,
+t3.Status

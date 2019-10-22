@@ -1,0 +1,30 @@
+
+SELECT AcqDate,
+PaymentD,
+COUNT( DISTINCT EmailAddress ) AS Count
+FROM 
+(
+SELECT EmailAddress,
+convert(varchar, Created, 105) AS AcqDate,
+PaymentD
+FROM [YallaParking].[dbo].[User] as t1
+JOIN 
+(
+SELECT UserId,PaymentD
+FROM UserCar
+JOIN 
+(
+select UserCarId,convert(varchar, PaymentDate, 105) AS PaymentD
+FROM [YallaParking].[dbo].[ParkingSpaceLease]
+WHERE PaymentDate IS NOT NULL
+GROUP BY UserCarId,PaymentDate) t1
+ON UserCar.UserCarId=t1.UserCarId
+GROUP BY UserId,PaymentD
+) t2
+ON t1.UserId=t2.UserId
+GROUP BY EmailAddress,Created,PaymentD
+) t1
+
+GROUP BY
+AcqDate,
+PaymentD
